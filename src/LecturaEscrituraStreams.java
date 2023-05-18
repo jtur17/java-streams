@@ -1,98 +1,201 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.Buffer;
 
-import javax.xml.catalog.Catalog;
 
 
 public class LecturaEscrituraStreams {
+
+    static StringBuilder cartelera = new StringBuilder();
     
     public static void leerEscribirByteByte(){
 
-        int i; 
+        // Limpio la cartelera para reutilizarlo    
+        cartelera.setLength(0);
+        cartelera.append("Cartelera de Cine CIFFBMOLL:" + "\n" + "\n");
         
-        try(FileInputStream fin = new FileInputStream(Ruta.rutaEntrada());
-            FileOutputStream fout = new FileOutputStream(Ruta.rutaSalida())){
+        try(FileInputStream entrada = new FileInputStream(Ruta.rutaEntrada());
+            FileOutputStream salida = new FileOutputStream(Ruta.rutaSalida())){
 
-            do {
-                // Read devuelve un entero perteneciente al código
-                // ascii del byte leido
+            int contador = 0;
+            int contadorAlmohadilla = 0;
 
-                i = fin.read();
-                if ( i != -1){
-                    fout.write(i);
+            String titulo = "";
+            String año = "";
+            String director = "";
+            String duracion = "";
+            String sinopsis = "";
+            String reparto = "";
+            String sesion = "";
+
+            while(contador != -1){
+
+                contador = entrada.read();
+                char letra = (char) contador; 
+
+                if (letra == '#'){
+                    contadorAlmohadilla++;
+                    continue;
                 }
 
-            } while( i != -1); // Cuando i es igual a -1, se ha 
-            // alcanzado el final del archivo EOF
+                if (letra != '#' && contadorAlmohadilla == 0){
+                    titulo += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 1){
+                    año += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 2){
+                    director += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 3){
+                    duracion += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 4){
+                    sinopsis += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 5){
+                    reparto += letra;
+                }
+
+                if (letra != '{' && contadorAlmohadilla == 6){
+                    sesion += letra;
+                }
+
+                if (letra == '{'){
+
+                    contadorAlmohadilla = 0;
+
+                    crearCartelera(cartelera, titulo, año, director, duracion, sinopsis, reparto, sesion);
+
+                    titulo = "";
+                    año = "";
+                    director = "";
+                    duracion = "";
+                    sinopsis = "";
+                    reparto = "";
+                    sesion = "";
+                    continue;
+                }
+
+            }
+
+            entrada.close();
+            crearCartelera(cartelera, titulo, año, director, duracion, sinopsis, reparto, sesion);
+            salida.write(cartelera.toString().getBytes());
+            salida.close();
+
+           
         } catch(Exception e){
-            System.out.println(e.getMessage());
+            RutaInvalida.imprimirError(e);
         }
+    }
+        
+    public static void crearCartelera(StringBuilder cartelera, String titulo, String año, String director, String duracion, String sinopsis, String reparto, String sesion){
+        cartelera.append("-----" + titulo + "----" + "\n" + "\n");
+        cartelera.append("Año: " + año + "\n" + "\n");
+        cartelera.append("Director: " + director + "\n" + "\n");
+        cartelera.append("Duración: " + duracion + " minutos" + "\n" + "\n");
+        cartelera.append("Sinopsis: " + sinopsis + "\n" + "\n");
+        cartelera.append("Reparto: " + reparto + "\n" + "\n");
+        cartelera.append("Sesión: " + sesion + " horas" + "\n" + "\n");
     }
 
     public static void leerEscribirCarCar(){
-
-        // Definimos los archivos a usar
-        File entrada = new File(Ruta.rutaEntrada());
-        File salida = new File(Ruta.rutaSalida());
-
-        try(FileReader lector = new FileReader(entrada);
-            FileWriter escritor = new FileWriter(salida)){
-
-            int c;
-
-            while ((c = lector.read()) != -1){
-                escritor.write(c);
-            }
-
-            System.out.println("Archivo copiado exitosamente.");
-
-        } catch(Exception e){
-            RutaInvalida.imprimirError(e);
-        }
-    }
-
-    public static void leerEscribirBuffer(){
-
-        // Definimos los archivos a usar
-        File entrada = new File(Ruta.rutaEntrada());
-        File salida = new File(Ruta.rutaSalida());
-
-
-        try(BufferedReader lector = new BufferedReader(new FileReader(entrada));
-            BufferedWriter escritor = new BufferedWriter(new FileWriter(salida))){
-
-            // Construye un BufferedReader
-            BufferedReader lectorMejorado = new BufferedReader(lector);
-            
-            // Defino variables
-            boolean eof = false;
-            String lineaLeida = "";
-            String[] broken_text = null;
-
-            while(!eof){
-
-                // Lee una linea entera
-                lineaLeida = lectorMejorado.readLine();
-
-                // Una vez leida la linea la podemos partir con el metodo split,
-                // suele ser muy útil
-                broken_text = lineaLeida.split(" ");
-
-            }
-                
-
-
-
-        } catch(Exception e){
-            RutaInvalida.imprimirError(e);
-        }
         
+        // Limpio la cartelera para reutilizarlo    
+        cartelera.setLength(0);
+        cartelera.append("Cartelera de Cine CIFFBMOLL:" + "\n" + "\n");
+
+        try(FileReader entrada = new FileReader(Ruta.rutaEntrada());
+            FileWriter salida = new FileWriter(Ruta.rutaSalida())) {
+            
+            
+            int contador = 0;
+            int contadorAlmohadilla = 0;
+
+            String titulo = "";
+            String año = "";
+            String director = "";
+            String duracion = "";
+            String sinopsis = "";
+            String reparto = "";
+            String sesion = "";
+
+            while(contador != -1){
+
+                contador = entrada.read();
+                char letra = (char) contador; 
+
+                if (letra == '#'){
+                    contadorAlmohadilla++;
+                    continue;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 0){
+                    titulo += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 1){
+                    año += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 2){
+                    director += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 3){
+                    duracion += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 4){
+                    sinopsis += letra;
+                }
+
+                if (letra != '#' && contadorAlmohadilla == 5){
+                    reparto += letra;
+                }
+
+                if (letra != '{' && contadorAlmohadilla == 6){
+                    sesion += letra;
+                }
+
+                if (letra == '{'){
+
+                    contadorAlmohadilla = 0;
+
+                    crearCartelera(cartelera, titulo, año, director, duracion, sinopsis, reparto, sesion);
+
+                    titulo = "";
+                    año = "";
+                    director = "";
+                    duracion = "";
+                    sinopsis = "";
+                    reparto = "";
+                    sesion = "";
+                    continue;
+                }
+                
+                entrada.close();
+
+                crearCartelera(cartelera, titulo, año, director, duracion, sinopsis, reparto, sesion);
+                
+                for (int i = 0; i < cartelera.length(); i++){
+                    salida.write(cartelera.charAt(i));
+                }
+
+                salida.close();
+
+            } catch( IOException e){
+                RutaInvalida.imprimirError(e);
+            }
+        }
+
     }
 }

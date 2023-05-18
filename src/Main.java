@@ -27,7 +27,7 @@ public class Main {
             switch (opcion) {
 
                 case 1:
-                    Ruta.rutaEntrada();
+                    LecturaEscrituraStreams.leerEscribirByteByte();
                     break;
 
                 case 2:

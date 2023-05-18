@@ -6,12 +6,6 @@ import java.util.Arrays;
 
 public class RutaInvalida extends Exception{
 
-
-    // Constructor vacio
-    public RutaInvalida(){
-        super();
-    }
-
     // Constructor con un atributo
     public RutaInvalida(String mensaje){
         super(mensaje);
